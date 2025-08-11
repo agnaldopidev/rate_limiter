@@ -19,7 +19,8 @@ func main() {
 		5,           // Limite padrão (IP)
 		time.Second, // Janela de tempo
 	)
-
+	middleware.SetTokenLimit("abc123", 100)
+	middleware.SetTokenLimit("free-tier", 2)
 	// 3. Roteador
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
