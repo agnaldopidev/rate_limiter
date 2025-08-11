@@ -1,0 +1,6 @@
+mkdir rate_limiter
+cd rate_limiter
+mkdir cmd/server internal/domain internal/interfaces/repositories
+
+go mod init github.com/agnaldopidev/rate_limiter
+
