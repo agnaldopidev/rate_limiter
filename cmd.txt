@@ -4,3 +4,7 @@ mkdir cmd/server internal/domain internal/interfaces/repositories
 
 go mod init github.com/agnaldopidev/rate_limiter
 
+mkdir -p internal/infrastructure/memory
+
+mkdir -p internal/infrastructure/memory/test
+

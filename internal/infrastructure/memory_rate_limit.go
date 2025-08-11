@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"context"
-	"github.com/agnaldopidev/internal/rate_limiterinterfaces/repositories"
+	"github.com/agnaldopidev/rate_limiter/internal/interfaces/repositories"
 	"sync"
 	"time"
 )
@@ -25,4 +25,5 @@ func (m *MemoryRateLimiter) CheckLimit(ctx context.Context, key string, limit in
 	defer m.mu.Unlock()
 
 	// Lógica de rate limiting aqui
+	return true, 0, nil
 }
