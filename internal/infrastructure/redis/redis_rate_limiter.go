@@ -6,6 +6,7 @@ import (
 	"github.com/agnaldopidev/rate_limiter/internal/interfaces/repositories"
 	"time"
 
+	_ "github.com/agnaldopidev/rate_limiter/internal/interfaces/repositories"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -28,35 +29,34 @@ func (r *RedisRateLimiter) Allow(
 	key string,
 	limit int,
 	window time.Duration,
+	blockDuration time.Duration, // Novo parâmetro
 ) (bool, int, error) {
-	// 1. Verifica se está bloqueado
 	blockKey := fmt.Sprintf("block:%s", key)
-	if blocked, _ := r.client.Get(ctx, blockKey).Bool(); blocked {
+	countKey := fmt.Sprintf("count:%s", key)
+
+	// Verifica bloqueio
+	if ttl, _ := r.client.TTL(ctx, blockKey).Result(); ttl > 0 {
 		return false, 0, nil
 	}
 
-	// 2. Incrementa o contador
-	countKey := fmt.Sprintf("count:%s", key)
+	// Incrementa contador
 	current, err := r.client.Incr(ctx, countKey).Result()
 	if err != nil {
 		return false, 0, err
 	}
 
-	// 3. Seta expiração na primeira requisição
+	// Seta expiração
 	if current == 1 {
 		r.client.Expire(ctx, countKey, window)
 	}
 
-	// 4. Verifica o limite
 	remaining := limit - int(current)
 	if remaining < 0 {
 		remaining = 0
 	}
 
 	if int(current) > limit {
-		// Bloqueia a chave
-		r.client.Set(ctx, blockKey, 1, window)
-		r.client.Del(ctx, countKey) // Reseta o contador
+		r.client.Set(ctx, blockKey, 1, blockDuration) // Usa blockDuration
 		return false, remaining, nil
 	}
 

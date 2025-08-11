@@ -9,14 +9,12 @@ import (
 	"github.com/agnaldopidev/rate_limiter/internal/interfaces/repositories"
 )
 
-// MemoryRateLimiter implementa RateLimitRepository usando armazenamento em memória
 type MemoryRateLimiter struct {
-	counts map[string]int       // Contador de requisições por chave
-	blocks map[string]time.Time // Registro de bloqueios por chave
-	mu     sync.Mutex           // Mutex para evitar concorrência
+	counts map[string]int
+	blocks map[string]time.Time
+	mu     sync.Mutex
 }
 
-// NewMemoryRateLimiter cria uma nova instância do limitador em memória
 func NewMemoryRateLimiter() repositories.RateLimitRepository {
 	return &MemoryRateLimiter{
 		counts: make(map[string]int),
@@ -24,28 +22,27 @@ func NewMemoryRateLimiter() repositories.RateLimitRepository {
 	}
 }
 
-// Allow verifica se uma requisição é permitida
 func (m *MemoryRateLimiter) Allow(
 	ctx context.Context,
 	key string,
 	limit int,
 	window time.Duration,
+	blockDuration time.Duration, // Novo parâmetro
 ) (bool, int, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// 1. Verifica se está bloqueado
+	// Verifica bloqueio existente
 	if blockTime, exists := m.blocks[key]; exists {
-		if time.Since(blockTime) < window {
-			return false, 0, nil // Ainda bloqueado
+		if time.Since(blockTime) < blockDuration { // Usa blockDuration aqui
+			return false, 0, nil
 		}
-		delete(m.blocks, key) // Remove bloqueio expirado
+		delete(m.blocks, key)
 	}
 
-	// 2. Incrementa o contador ou reinicia a janela
+	// Lógica de contagem
 	m.counts[key]++
 	if m.counts[key] == 1 {
-		// Simula expiração da janela (em um sistema real, usaríamos goroutine ou timer)
 		go func() {
 			time.Sleep(window)
 			m.mu.Lock()
@@ -54,16 +51,14 @@ func (m *MemoryRateLimiter) Allow(
 		}()
 	}
 
-	// 3. Verifica o limite
 	remaining := limit - m.counts[key]
 	if remaining < 0 {
 		remaining = 0
 	}
 
 	if m.counts[key] > limit {
-		// Bloqueia a chave
 		m.blocks[key] = time.Now()
-		delete(m.counts, key) // Reseta o contador
+		delete(m.counts, key)
 		return false, remaining, nil
 	}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/agnaldopidev/rate_limiter/internal/infrastructure/redis"
+	"github.com/agnaldopidev/rate_limiter/internal/interfaces/http/handlers"
 	"github.com/agnaldopidev/rate_limiter/internal/interfaces/http/middleware"
 	"net/http"
 	"time"
@@ -16,13 +17,18 @@ func main() {
 	// 2. Configura o middleware (5 reqs/segundo por IP)
 	middleware := middleware.NewRateLimiterMiddleware(
 		redisLimiter,
-		5,           // Limite padrão (IP)
-		time.Second, // Janela de tempo
+		5,
+		time.Second,
+		30*time.Second, // Janela de tempo
 	)
-	middleware.SetTokenLimit("premium", 100)
-	middleware.SetTokenLimit("free", 2)
+	//	middleware.SetTokenLimit("premium", 100)
+	//	middleware.SetTokenLimit("free", 2)
+
+	configHandler := handlers.NewConfigHandler(middleware)
+
 	// 3. Roteador
 	mux := http.NewServeMux()
+	mux.HandleFunc("/config", configHandler.UpdateConfig) // Novo endpoint
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, Redis Rate Limiter!"))
 	})
