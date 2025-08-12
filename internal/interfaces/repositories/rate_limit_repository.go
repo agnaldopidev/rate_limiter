@@ -1,4 +1,3 @@
-// internal/interfaces/repositories/rate_limit_repository.go
 package repositories
 
 import (
@@ -9,9 +8,9 @@ import (
 type RateLimitRepository interface {
 	Allow(
 		ctx context.Context,
-		key string, // Identificador (IP/token)
-		limit int, // Limite de requisições
-		window time.Duration, // Janela de tempo
+		key string,                  // Identificador (IP/token)
+		limit int,                   // Limite de requisições
+		window time.Duration,        // Janela de tempo
 		blockDuration time.Duration, // Tempo de bloqueio
 	) (allowed bool, remaining int, err error)
 }

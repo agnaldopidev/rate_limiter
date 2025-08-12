@@ -103,9 +103,9 @@ func (m *RateLimiterMiddleware) Handler(next http.Handler) http.Handler {
 
 func getRequestKey(r *http.Request) string {
 	if token := r.Header.Get("API_KEY"); token != "" {
-		return token
+		return token //prioriza token
 	}
-	return r.RemoteAddr
+	return r.RemoteAddr //Fallback para IP
 }
 
 func handleError(w http.ResponseWriter, message string, status int) {
