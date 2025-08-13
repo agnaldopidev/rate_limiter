@@ -1,6 +1,8 @@
 version: '3.8'
 services:
   app:
+    container_name: rate_limiter_app
+    restart: always
     build: .
     ports:
       - "8080:8080"
@@ -10,9 +12,16 @@ services:
       - redis
 
   redis:
+    container_name: redis_service
+    restart: always
     image: redis:alpine
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     volumes:
       - redis_data:/data
 
