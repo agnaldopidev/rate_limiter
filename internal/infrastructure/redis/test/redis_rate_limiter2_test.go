@@ -1,4 +1,4 @@
-git package redis2_test
+package redis2_test
 
 import (
 	"context"

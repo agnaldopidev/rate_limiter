@@ -8,3 +8,6 @@ mkdir -p internal/infrastructure/memory
 
 mkdir -p internal/infrastructure/memory/test
 
+source venv/bin/active
+
+python 1_test_requisicao_token.py

@@ -6,8 +6,18 @@ services:
     build: .
     ports:
       - "8080:8080"
-    env_file:
-      - .env
+    environment:
+      APP_ENV: "production"
+      APP_DEBUG: "false"
+      APP_PORT: "8080"
+      IP_LIMIT: 10
+      IP_WINDOW: 1s
+      IP_BLOCK_DURATION: 1m
+      TOKEN_LIMIT: 100
+      TOKEN_BLOCK_DURATION: 2m
+      REDIS_PASS:
+      REDIS_DB: 0
+      REDIS_ADDR: "redis_service:6379"  # Exemplo de variável interligando ao container Redis
     depends_on:
       - redis
 
