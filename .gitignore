@@ -1,0 +1,39 @@
+# Diretório do módulo Go
+/coverage.out
+
+# Dependências baixadas pelo Go (não são necessárias no controle de versão)
+vendor/
+
+# Saídas de build
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Excluindo arquivos de cache e compilação
+*.out
+*.log
+
+# Configurações específicas do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos do ambiente Python no venv
+tests/teste_python_reate_limiter/venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs temporários e configs específicas de IDEs
+/.idea/
+/.vscode/
+*.iml
+
+# Outros arquivos temporários
+*.swp
+*.temp
+*.bak
+*.old
+*.orig
