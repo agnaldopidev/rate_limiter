@@ -28,7 +28,7 @@ Certifique-se de ter os seguintes itens instalados:
 ### 2. **Clonar o Repositório**
 Clone o projeto em sua máquina:
 ```bash
-  git clone https://github.com/agnaldopidevv/rate_limiter.git
+  git clone https://github.com/agnaldopidev/rate_limiter
   cd rate_limiter
 ```
 
@@ -68,7 +68,7 @@ Essa configuração utiliza a porta padrão `6379`. Certifique-se de que não h�
 Compile e execute o servidor:
 
 ```bash
-   go run main.go
+   go run cmd/server/main.go
 ```
 
 O servidor será iniciado na porta `8080`.
@@ -107,6 +107,12 @@ Resultado esperado:
 - A 11ª externa bloqueio com resposta HTTP `429`.
 
 ---
+
+### 3 Teste com Python
+```bash
+  python tests/teste_python_rate_limiter/1_test_requisicao_token.py
+  python tests/teste_python_rate_limiter/2_test_rate_limite.py
+```
 
 ## 🛠 Estrutura do Projeto
 
